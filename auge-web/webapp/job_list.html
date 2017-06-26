@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>auge</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<!--<link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css">-->
+	<!--<script src="https://cdn.bootcss.com/angular.js/1.6.3/angular.min.js"></script>-->
+	<script src="js/angular-1.6.3.min.js"></script>
+	<style>
+		.table tbody tr:nth-child(2n) {
+			background-color: #DFF0D8;
+		}
+
+		.table tbody tr:nth-child(2n+1) {
+			background-color: #D9EDF7;
+		}
+	</style>
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	   <div class="row">
+		  <div class="col-md-12">
+			<ul class="nav nav-pills">
+				<li>
+					<a href="#">dashbord</a>
+				</li>
+				<li class="active">
+					<a href="#">joblist</a>
+				</li>
+				<li class="disabled">
+					<a href="#">history</a>
+				</li>
+				<li>
+					<a href="#">addjob</a>
+				</li>
+
+			</ul>
+			<div class="col-sm-3 col-md-3 navbar-right">
+				<form class="navbar-form" role="search">
+					<div class="input-group">
+
+						<input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			  <div ng-app="jobsApp" ng-controller="jobsCtrl">
+				  <table class="table" >
+					<thead>
+						<tr>
+							<th> id </th> <th> name </th> <th> date </th> <th> status </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="job in jobs">
+							<td>{{ job.id }}</td>
+							<td>{{ job.name }}</td>
+							<td>{{ job.date }}</td>
+							<td>{{ job.status }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<ul class="pagination">
+				<li>
+					<a href="#">上一页</a>
+				</li>
+				<li>
+					<a href="#">1</a>
+				</li>
+				<li>
+					<a href="#">2</a>
+				</li>
+				<li>
+					<a href="#">3</a>
+				</li>
+				<li>
+					<a href="#">4</a>
+				</li>
+				<li>
+					<a href="#">5</a>
+				</li>
+				<li>
+					<a href="#">下一页</a>
+				</li>
+			</ul>
+		</div>
+	   </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+
+	<script>
+		var app = angular.module('jobsApp', []);
+		app.controller('jobsCtrl', function($scope, $http) {
+			$http({
+				method: 'POST',
+				url: 'jobListServlet'
+			}).then(function successCallback(response) {
+				$scope.jobs = response.data.result;
+//            alert("response: "+ JSON.stringify(response.data.sites))
+			}, function errorCallback(response) {
+				alert("error!!")
+			});
+		});
+	</script>
+
+  </body>
+</html>
