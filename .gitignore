@@ -1,0 +1,6 @@
+/target
+/.idea
+/auge-execute/target
+/auge-web/target
+/auge.iml
+/.gitignore
