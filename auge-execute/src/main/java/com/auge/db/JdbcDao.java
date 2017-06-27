@@ -1,7 +1,6 @@
 package com.auge.db;
 
-import com.auge.execute.job.Job;
-import com.auge.execute.job.JobConstants;
+import com.auge.model.Job;
 
 import java.util.ArrayList;
 import java.util.List;

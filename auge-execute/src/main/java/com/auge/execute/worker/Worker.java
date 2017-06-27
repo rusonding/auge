@@ -1,11 +1,5 @@
 package com.auge.execute.worker;
 
-import com.auge.execute.executor.CommandJobExecutor;
-import com.auge.execute.executor.Executor;
-import com.auge.execute.job.Job;
-import com.auge.execute.job.JobType;
-import com.auge.execute.message.Message;
-import com.auge.execute.message.MessageType;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

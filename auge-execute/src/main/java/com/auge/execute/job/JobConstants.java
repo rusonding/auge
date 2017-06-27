@@ -9,8 +9,8 @@ public class JobConstants {
     public static final int DEPENDENCE_PARENT = 2;
     public static final int DEPENDENCE_CHILD = 3;
 
-    public static final int JOB_STATE_READY = 0;
-    public static final int JOB_STATE_RUNNING = 0;
-    public static final int JOB_STATE_FINISH = 0;
-    public static final int JOB_STATE_FAIL = 0;
+    public static final int JOB_STATUS_READY = 1;
+    public static final int JOB_STATUS_RUNNING = 2;
+    public static final int JOB_STATUS_FINISH = 3;
+    public static final int JOB_STATUS_FAIL = 4;
 }

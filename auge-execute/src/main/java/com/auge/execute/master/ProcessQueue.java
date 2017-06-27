@@ -1,7 +1,7 @@
 package com.auge.execute.master;
 
 import com.auge.execute.message.Message;
-import com.auge.execute.utils.Utils;
+import com.auge.utils.Utils;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 

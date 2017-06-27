@@ -54,14 +54,14 @@ public class MasterHandler extends SimpleChannelInboundHandler<Message> {
                 Worker execWorker = master.getWorkers().get(workerId);
                 execWorker.decreaseExec();
                 logger.debug("worker " + workerId + " executor num: " + execWorker.getExecutorNum());
-                msg.getJob().setJobState(JobConstants.JOB_STATE_FINISH);
+                msg.getJob().setJobStatus(JobConstants.JOB_STATUS_FINISH);
                 JdbcDao.updateJobSate(msg.getJob());
                 break;
             case FAILURE:
                 Worker failWorker = master.getWorkers().get(workerId);
                 failWorker.decreaseExec();
                 logger.warn("fail worker " + workerId + " executor num: " + failWorker.getExecutorNum());
-                msg.getJob().setJobState(JobConstants.JOB_STATE_FAIL);
+                msg.getJob().setJobStatus(JobConstants.JOB_STATUS_FAIL);
                 JdbcDao.updateJobSate(msg.getJob());
                 break;
         }
@@ -72,12 +72,12 @@ public class MasterHandler extends SimpleChannelInboundHandler<Message> {
         msg.setType(MessageType.EXECUTE);
         if (freeWorker.getExecutorNum() > Worker.executorMaxNum) {
             messageQueue.offer(msg);
-            msg.getJob().setJobState(JobConstants.JOB_STATE_READY);
+            msg.getJob().setJobStatus(JobConstants.JOB_STATUS_READY);
             JdbcDao.updateJobSate(msg.getJob());
         } else {
             freeWorker.incrementExec();
             freeWorker.getChannel().writeAndFlush(msg);
-            msg.getJob().setJobState(JobConstants.JOB_STATE_RUNNING);
+            msg.getJob().setJobStatus(JobConstants.JOB_STATUS_RUNNING);
             JdbcDao.updateJobSate(msg.getJob());
         }
     }

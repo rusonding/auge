@@ -1,8 +1,6 @@
 package com.auge.execute.message;
 
-import com.auge.execute.job.Job;
-import com.auge.execute.worker.Worker;
-import com.google.gson.Gson;
+import com.auge.model.Job;
 
 import java.io.Serializable;
 
