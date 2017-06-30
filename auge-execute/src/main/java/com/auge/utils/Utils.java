@@ -1,5 +1,7 @@
 package com.auge.utils;
 
+import com.auge.trigger.JdbcTriggerLoader;
+import com.auge.trigger.TriggerLoader;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 
@@ -46,5 +48,17 @@ public class Utils {
             logger.error("error CronExpression:"+cronExpression, e);
         }
         return cronTime;
+    }
+
+    public static Props getMysqlAuth() {
+        Props p = new Props();
+        p.put("database.type", "mysql");
+        p.put("mysql.port", 3306);
+        p.put("mysql.host", "localhost");
+        p.put("mysql.database", "test");
+        p.put("mysql.user", "root");
+        p.put("mysql.password", "root");
+        p.put("mysql.numconnections", 2);
+        return p;
     }
 }

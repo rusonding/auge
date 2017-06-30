@@ -135,9 +135,28 @@ public class JdbcTriggerLoader  extends AbstractJdbcLoader implements TriggerLoa
         }
     }
 
+    @Override
+    public List<Job> loadJobs(String jobId) {
+        String sql = "select job_id,command from jobs where parentId= "+jobId;
+
+        logger.info("Loading all trigger from db.");
+        QueryRunner runner = new QueryRunner();
+        ResultSetHandler<List<Job>> handler = new JobResultHandler();
+        List<Job> triggers = null;
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            triggers = runner.query(connection, sql, handler);
+        } catch (Exception e) {
+            logger.error(GET_ALL_TRIGGERS + " failed.");
+        } finally {
+            DbUtils.closeQuietly(connection);
+        }
+        return triggers;
+    }
+
 
     public class TriggerResultHandler implements ResultSetHandler<List<Trigger>> {
-
         @Override
         public List<Trigger> handle(ResultSet rs) throws SQLException {
             if (!rs.next()) {
@@ -169,6 +188,26 @@ public class JdbcTriggerLoader  extends AbstractJdbcLoader implements TriggerLoa
                 }
             } while (rs.next());
             return triggers;
+        }
+    }
+
+
+    public class JobResultHandler implements ResultSetHandler<List<Job>> {
+        @Override
+        public List<Job> handle(ResultSet rs) throws SQLException {
+            if (!rs.next()) {
+                return Collections.<Job> emptyList();
+            }
+            ArrayList<Job> jobs = new ArrayList<Job>();
+            do {
+                String jobId = rs.getString(1);
+                String jobCommand = rs.getString(2);
+                Job job = new Job();
+                job.setJobId(jobId);
+                job.setExecutor(new CommandJobExecutor(jobCommand));
+                jobs.add(job);
+            } while (rs.next());
+            return jobs;
         }
     }
 }

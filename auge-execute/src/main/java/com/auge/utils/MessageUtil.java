@@ -23,7 +23,7 @@ public class MessageUtil {
 //        header.setLen(bodySize);
         msg.setJob(job);
         msg.setClientId("cleintid---------");
-        msg.setType(MessageType.SUBMIT);
+        msg.setType(MessageType.JOB_SUBMIT);
         return msg;
     }
 }

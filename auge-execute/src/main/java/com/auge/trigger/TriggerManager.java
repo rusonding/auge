@@ -1,18 +1,15 @@
 package com.auge.trigger;
 
-import com.auge.client.Client;
 import com.auge.model.Job;
 import com.auge.model.Trigger;
 import com.auge.scheduler.JobScheduler;
-import com.auge.utils.Props;
+import com.auge.utils.Utils;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
@@ -31,22 +28,6 @@ public class TriggerManager implements TriggerManagerAdapter {
         this.triggerLoader = triggerLoader;
         long scannerInterval = DEFAULT_SCANNER_INTERVAL_MS;
         runnerThread = new TriggerScannerThread(scannerInterval);
-    }
-
-    public long getLastRunnerThreadCheckTime() {
-        return lastRunnerThreadCheckTime;
-    }
-
-    public void setLastRunnerThreadCheckTime(long lastRunnerThreadCheckTime) {
-        this.lastRunnerThreadCheckTime = lastRunnerThreadCheckTime;
-    }
-
-    public long getRunnerThreadIdleTime() {
-        return runnerThreadIdleTime;
-    }
-
-    public void setRunnerThreadIdleTime(long runnerThreadIdleTime) {
-        this.runnerThreadIdleTime = runnerThreadIdleTime;
     }
 
     @Override
@@ -192,15 +173,8 @@ public class TriggerManager implements TriggerManagerAdapter {
     }
 
     public static void main(String[] args) throws Exception {
-        Props p = new Props();
-        p.put("database.type", "mysql");
-        p.put("mysql.port", 3306);
-        p.put("mysql.host", "localhost");
-        p.put("mysql.database", "test");
-        p.put("mysql.user", "root");
-        p.put("mysql.password", "root");
-        p.put("mysql.numconnections", 2);
-        TriggerLoader loader = new JdbcTriggerLoader(p);
+
+        TriggerLoader loader = new JdbcTriggerLoader(Utils.getMysqlAuth());
         TriggerManager tm = new TriggerManager(loader);
         tm.start();
 

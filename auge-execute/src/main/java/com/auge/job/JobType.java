@@ -1,4 +1,4 @@
-package com.auge.execute.job;
+package com.auge.job;
 
 /**
  * Created by lixun on 2017/6/22.

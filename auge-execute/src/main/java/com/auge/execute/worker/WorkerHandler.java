@@ -3,7 +3,6 @@ package com.auge.execute.worker;
 import com.auge.execute.message.Message;
 import com.auge.execute.message.MessageType;
 import com.google.gson.Gson;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -25,28 +24,31 @@ public class WorkerHandler extends SimpleChannelInboundHandler<Message> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
         switch (msg.getType()) {
-            case CONNECT_SUCCESS:
+            case MASTER_CONNECT_SUCCESS:
                 logger.info("connect success.");
                 break;
-            case EXECUTE:
+            case MASTER_EXECUTE:
                 System.out.println("exec job:" + new Gson().toJson(msg));
                 int executeState = msg.getJob().getExecutor().execute();
                 if (executeState == 0) {
                     //execute success,send msg to master
-                    msg.setType(MessageType.SUCCESS);
+                    msg.setType(MessageType.WORKER_SUCCESS);
                 } else {
-                    msg.setType(MessageType.FAILURE);
+                    msg.setType(MessageType.WORKER_FAILURE);
                 }
                 ctx.writeAndFlush(msg);
                 break;
+            default:
+                msg.setType(MessageType.WORKER_FAILURE);
+                ctx.writeAndFlush(msg);
+
+
         }
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        Message msg = new Message(MessageType.CONNECT_EXECUTOR);
-        System.out.println("worker channelActive:"+worker);
-//        msg.setWorker(worker);
+        Message msg = new Message(MessageType.WORKER_CONNECT_EXECUTOR);
         ctx.writeAndFlush(msg);
     }
 

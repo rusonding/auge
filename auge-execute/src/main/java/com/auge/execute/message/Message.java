@@ -12,8 +12,17 @@ public class Message implements Serializable {
     private MessageType type;
     private Job job;
     private String workerId;
+    private String channelId;
 
     public Message() {
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public String getWorkerId() {

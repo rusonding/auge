@@ -1,19 +1,19 @@
 package com.auge.execute.master;
 
 import com.auge.db.JdbcDao;
-import com.auge.execute.job.JobConstants;
+import com.auge.job.JobConstants;
 import com.auge.execute.message.Message;
 import com.auge.execute.message.MessageType;
 import com.auge.execute.worker.Worker;
 import com.auge.execute.worker.WorkerAdmin;
-import com.google.gson.Gson;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -23,9 +23,10 @@ public class MasterHandler extends SimpleChannelInboundHandler<Message> {
     private static Logger logger = LoggerFactory.getLogger(MasterHandler.class);
     private Master master;
     public static ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
+    public static Map<String, Channel> clientChannels = new HashMap<String, Channel>();
+
     public MasterHandler(Master master) {
         this.master = master;
-
         Thread thread = new Thread(new ProcessQueue(this));
         thread.start();
     }
@@ -37,7 +38,7 @@ public class MasterHandler extends SimpleChannelInboundHandler<Message> {
         logger.debug("workers: "+master.getWorkers());
 
         switch (msg.getType()) {
-            case CONNECT_EXECUTOR:
+            case WORKER_CONNECT_EXECUTOR:
 //                Worker worker = msg.getWorker();
                 Worker worker = new Worker();
                 worker.setChannel(channel);
@@ -45,31 +46,48 @@ public class MasterHandler extends SimpleChannelInboundHandler<Message> {
                 if (master.addWorker(worker)) {
                     logger.info("connected worker:"+workerId);
                 }
-                channel.write(new Message(MessageType.CONNECT_SUCCESS));
+                channel.write(new Message(MessageType.MASTER_CONNECT_SUCCESS));
                 break;
-            case SUBMIT:
+            case JOB_SUBMIT: //client submit job
+//                channel.writeAndFlush(msg);
+                clientChannels.put(msg.getChannelId(), channel);
                 submit(msg);
+//                channel.writeAndFlush(msg);
+//                callClient(msg, MessageType.JOB_SUCCESS);
                 break;
-            case SUCCESS:
+            case WORKER_SUCCESS:
                 Worker execWorker = master.getWorkers().get(workerId);
                 execWorker.decreaseExec();
                 logger.debug("worker " + workerId + " executor num: " + execWorker.getExecutorNum());
-                msg.getJob().setJobStatus(JobConstants.JOB_STATUS_FINISH);
+                msg.getJob().setJobStatus(JobConstants.JOB_STATUS_SUCCESS);
                 JdbcDao.updateJobSate(msg.getJob());
+                callClient(msg, MessageType.JOB_SUCCESS);
                 break;
-            case FAILURE:
+            case WORKER_FAILURE:
                 Worker failWorker = master.getWorkers().get(workerId);
                 failWorker.decreaseExec();
                 logger.warn("fail worker " + workerId + " executor num: " + failWorker.getExecutorNum());
                 msg.getJob().setJobStatus(JobConstants.JOB_STATUS_FAIL);
                 JdbcDao.updateJobSate(msg.getJob());
+                callClient(msg, MessageType.JOB_FAILURE);
                 break;
+            default:
+                callClient(msg, MessageType.JOB_UNKNOWN);
         }
     }
 
+    private void callClient(Message msg, MessageType type) {
+        msg.setType(type);
+        Channel channel = clientChannels.get(msg.getChannelId());
+        channel.writeAndFlush(msg);
+    }
+    /**
+     * submit job to worker
+     * @param msg
+     */
     public void submit(Message msg) {
         Worker freeWorker = WorkerAdmin.getFreeWorker(master.getWorkers());
-        msg.setType(MessageType.EXECUTE);
+        msg.setType(MessageType.MASTER_EXECUTE);
         if (freeWorker.getExecutorNum() > Worker.executorMaxNum) {
             messageQueue.offer(msg);
             msg.getJob().setJobStatus(JobConstants.JOB_STATUS_READY);

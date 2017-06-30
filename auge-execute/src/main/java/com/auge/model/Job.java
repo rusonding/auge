@@ -1,7 +1,7 @@
 package com.auge.model;
 
 import com.auge.execute.executor.Executor;
-import com.auge.execute.job.JobType;
+import com.auge.job.JobType;
 
 /**
  * Created by lixun on 2017/6/20.

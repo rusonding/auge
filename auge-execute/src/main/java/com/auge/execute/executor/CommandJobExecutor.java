@@ -30,8 +30,9 @@ public class CommandJobExecutor implements Executor {
     @Override
     public int execute() throws Exception {
         logger.info("exec command:" + command);
+        int exitVal = 0;
         Process process = Runtime.getRuntime().exec(command);
-        int exitVal = process.waitFor();
+        exitVal = process.waitFor();
         if (exitVal != 0) {
             logger.error("failed exec command:"+command);
         }
