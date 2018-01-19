@@ -23,7 +23,7 @@ public class JobListServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JSONObject obj = new JSONObject();
         obj.put("id", 1);
-        obj.put("name", "yiguo");
+        obj.put("name", "test");
         obj.put("date", "2017-06-16");
         obj.put("status", "ok");
         JSONArray array = new JSONArray();

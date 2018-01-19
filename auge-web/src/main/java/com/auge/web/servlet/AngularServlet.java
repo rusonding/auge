@@ -24,7 +24,7 @@ public class AngularServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         JSONObject obj = new JSONObject();
-        obj.put("Name", "yiguo");
+        obj.put("Name", "test");
         obj.put("Url", "www.google.com");
         obj.put("Country", "USA");
         JSONArray array = new JSONArray();

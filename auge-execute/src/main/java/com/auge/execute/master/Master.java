@@ -55,6 +55,7 @@ public class Master {
             logger.info("starting master");
             ChannelFuture f = bootstrap.bind(port).sync();
             f.channel().closeFuture().sync();
+
         } catch (Exception e) {
             logger.error("start master error:", e);
         } finally {

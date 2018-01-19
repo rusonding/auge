@@ -1,5 +1,6 @@
 package com.auge.execute.worker;
 
+import com.auge.scheduler.ScheduleCallbackThread;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -65,6 +66,8 @@ public class Worker {
     }
 
     public void startWorker() {
+        ScheduleCallbackThread.getInstance().start();
+
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
